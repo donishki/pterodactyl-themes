@@ -89,3 +89,7 @@ The gallery now includes 20 built-in choices: the four original presets plus 16 
 These are independent Pterodactyl palette adaptations, not official ports or endorsements. Colors are mapped to the existing shared panel layout; selected surface and muted colors are adjusted for dashboard readability, and button colors are derived for contrast. No third-party application code, logos, or paid theme assets are included. The gallery links each adaptation to its inspiration.
 
 Validation: all 16 added presets pass normal/muted text contrast checks on background, surface, raised and input roles, plus primary button contrast. All 20 presets were activated on the isolated test panel, checked for client/admin theme injection, and exported as ZIP. Browser checks cover gallery filtering, empty search results, Catppuccin Mocha and Rose Pine Dawn server forms. Existing layout checks from 0.2 still apply; the client asset bundle is unchanged.
+
+### Canvas graph compatibility
+
+Console graphs resolve the active CSS palette into concrete RGBA values for Chart.js, including axis labels, subtle gridlines, line strokes and transparent fills. Canvas must never receive unresolved CSS variables or Tailwind color functions. Network legends use the same colors as their datasets; TX is outbound and RX is inbound. Empty history uses null samples instead of negative placeholder values. Verified with a production build, TypeScript checks and live Tokyo Night/Catppuccin Latte graph rendering.

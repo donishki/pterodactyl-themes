@@ -11,10 +11,30 @@ import {
 import { DeepPartial } from 'ts-essentials';
 import { useState } from 'react';
 import { deepmerge, deepmergeCustom } from 'deepmerge-ts';
-import { theme } from 'twin.macro';
-import { hexToRgba } from '@/lib/helpers';
 
 ChartJS.register(LineElement, PointElement, Filler, LinearScale);
+
+// Canvas cannot resolve CSS custom properties or Tailwind color functions.
+// Convert the active palette to concrete colors before handing it to Chart.js.
+export function getChartColors() {
+    const style = typeof window === 'undefined' ? null : getComputedStyle(document.documentElement);
+    const color = (role: string, fallback: string, alpha = 1) => {
+        const channels = style?.getPropertyValue(`--theme-rgb-${role}`).trim().split(/\s+/).map(Number);
+        return channels?.length === 3 && channels.every(Number.isFinite)
+            ? `rgba(${channels.join(', ')}, ${alpha})`
+            : fallback;
+    };
+    const light = style?.colorScheme === 'light';
+    return {
+        text: color('muted', '#cad1d8'),
+        grid: color('text', 'rgba(202, 209, 216, 0.14)', 0.14),
+        primary: color(light ? 'button' : 'accent', '#22d3ee'),
+        primaryFill: color(light ? 'button' : 'accent', 'rgba(34, 211, 238, 0.14)', 0.14),
+        secondary: light ? '#975a16' : '#fbbf24',
+        secondaryFill: light ? 'rgba(151, 90, 22, 0.12)' : 'rgba(251, 191, 36, 0.12)',
+        font: style?.getPropertyValue('--theme-font').trim() || '"IBM Plex Sans", sans-serif',
+    };
+}
 
 const options: ChartOptions<'line'> = {
     responsive: true,
@@ -45,15 +65,15 @@ const options: ChartOptions<'line'> = {
             type: 'linear',
             grid: {
                 display: true,
-                color: theme('colors.gray.700'),
+                color: 'rgba(202, 209, 216, 0.14)',
                 drawBorder: false,
             },
             ticks: {
                 display: true,
                 count: 3,
-                color: theme('colors.gray.200'),
+                color: '#cad1d8',
                 font: {
-                    family: theme('fontFamily.sans'),
+                    family: 'sans-serif',
                     size: 11,
                     weight: '400',
                 },
@@ -71,12 +91,16 @@ const options: ChartOptions<'line'> = {
 };
 
 function getOptions(opts?: DeepPartial<ChartOptions<'line'>> | undefined): ChartOptions<'line'> {
-    return deepmerge(options, opts || {});
+    const colors = getChartColors();
+    return deepmerge(options, {
+        scales: { y: { grid: { color: colors.grid }, ticks: { color: colors.text, font: { family: colors.font } } } },
+    }, opts || {});
 }
 
 type ChartDatasetCallback = (value: ChartDataset<'line'>, index: number) => ChartDataset<'line'>;
 
 function getEmptyData(label: string, sets = 1, callback?: ChartDatasetCallback | undefined): ChartData<'line'> {
+    const colors = getChartColors();
     const next = callback || ((value) => value);
 
     return {
@@ -90,9 +114,10 @@ function getEmptyData(label: string, sets = 1, callback?: ChartDatasetCallback |
                     {
                         fill: true,
                         label,
-                        data: Array(20).fill(-5),
-                        borderColor: theme('colors.cyan.400'),
-                        backgroundColor: hexToRgba(theme('colors.cyan.700'), 0.5),
+                        data: Array(20).fill(null),
+                        borderColor: colors.primary,
+                        borderWidth: 2,
+                        backgroundColor: colors.primaryFill,
                     },
                     index
                 )
@@ -131,7 +156,7 @@ function useChart(label: string, opts?: UseChartOptions) {
             merge(state, {
                 datasets: state.datasets.map((value) => ({
                     ...value,
-                    data: Array(20).fill(-5),
+                    data: Array(20).fill(null),
                 })),
             })
         );
