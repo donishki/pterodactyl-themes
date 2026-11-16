@@ -1,0 +1,22 @@
+name: Theme build checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: yarn
+      - run: corepack enable
+      - run: yarn install --frozen-lockfile
+      - run: yarn tsc --noEmit
+      - run: yarn build:production
+      - run: php -l app/Services/Themes/ThemeManager.php && php -l app/Http/Controllers/Admin/ThemesController.php && php -l routes/admin.php

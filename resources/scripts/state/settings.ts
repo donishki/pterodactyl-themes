@@ -2,6 +2,7 @@ import { action, Action } from 'easy-peasy';
 
 export interface SiteSettings {
     name: string;
+    themeLogo?: string;
     locale: string;
     recaptcha: {
         enabled: boolean;

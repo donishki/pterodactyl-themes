@@ -34,6 +34,7 @@ const RightNavigation = styled.div`
 
 export default () => {
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
+    const themeLogo = useStoreState((state: ApplicationStore) => state.settings.data?.themeLogo);
     const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -56,6 +57,7 @@ export default () => {
                             'text-2xl font-header font-medium px-4 no-underline text-neutral-200 hover:text-neutral-100 transition-colors duration-150'
                         }
                     >
+                        {themeLogo && <img src={themeLogo} alt={''} referrerPolicy={'no-referrer'} className={'panel-theme-logo'} />}
                         {name}
                     </Link>
                 </div>

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "theme": {
+    "name": "Ocean",
+    "accent": "#238fb8",
+    "background": "#101c28",
+    "surface": "#1c3042",
+    "text": "#ecf5fa",
+    "muted": "#adc4d4",
+    "radius": 10,
+    "font": "system",
+    "logo": ""
+  }
+}

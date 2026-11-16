@@ -5,6 +5,12 @@ use Pterodactyl\Http\Controllers\Admin;
 use Pterodactyl\Http\Middleware\Admin\Servers\ServerInstalled;
 
 Route::get('/', [Admin\BaseController::class, 'index'])->name('admin.index');
+Route::get('/themes', [Admin\ThemesController::class, 'index'])->name('admin.themes');
+Route::post('/themes', [Admin\ThemesController::class, 'store'])->name('admin.themes.store');
+Route::post('/themes/upload', [Admin\ThemesController::class, 'upload'])->name('admin.themes.upload');
+Route::post('/themes/{id}/activate', [Admin\ThemesController::class, 'activate'])->name('admin.themes.activate');
+Route::get('/themes/{id}/export', [Admin\ThemesController::class, 'export'])->name('admin.themes.export');
+Route::delete('/themes/{id}', [Admin\ThemesController::class, 'destroy'])->name('admin.themes.destroy');
 
 /*
 |--------------------------------------------------------------------------

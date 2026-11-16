@@ -1,3 +1,4 @@
+@php($panelTheme = app(\Pterodactyl\Services\Themes\ThemeManager::class)->active())
 <!DOCTYPE html>
 <html>
     <head>
@@ -34,11 +35,13 @@
             <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
             <![endif]-->
         @show
+        @include('partials.theme')
     </head>
     <body class="hold-transition skin-blue fixed sidebar-mini">
         <div class="wrapper">
             <header class="main-header">
                 <a href="{{ route('index') }}" class="logo">
+                    @if(!empty($panelTheme['logo']))<img class="panel-theme-logo" src="{{ $panelTheme['logo'] }}" alt="" referrerpolicy="no-referrer">@endif
                     <span>{{ config('app.name', 'Pterodactyl') }}</span>
                 </a>
                 <nav class="navbar navbar-static-top">
@@ -85,6 +88,7 @@
                                 <i class="fa fa-gamepad"></i> <span>Application API</span>
                             </a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.themes*') ? 'active' : '' }}"><a href="{{ route('admin.themes') }}"><i class="fa fa-paint-brush"></i> <span>Themes</span></a></li>
                         <li class="header">MANAGEMENT</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">

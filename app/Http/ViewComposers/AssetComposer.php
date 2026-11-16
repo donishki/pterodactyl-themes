@@ -22,6 +22,7 @@ class AssetComposer
         $view->with('asset', $this->assetHashService);
         $view->with('siteConfiguration', [
             'name' => config('app.name') ?? 'Pterodactyl',
+            'themeLogo' => app(\Pterodactyl\Services\Themes\ThemeManager::class)->active()['logo'] ?? '',
             'locale' => config('app.locale') ?? 'en',
             'recaptcha' => [
                 'enabled' => config('recaptcha.enabled', false),
