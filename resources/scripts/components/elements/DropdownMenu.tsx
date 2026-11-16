@@ -10,6 +10,8 @@ interface Props {
 
 export const DropdownButtonRow = styled.button<{ danger?: boolean }>`
     ${tw`p-2 flex items-center rounded w-full text-neutral-500`};
+    html[data-panel-theme] & { color: var(--theme-text); }
+    html[data-panel-theme] &:hover { background: var(--theme-raised); color: var(--theme-text); }
     transition: 150ms all ease;
 
     &:hover {
@@ -93,6 +95,7 @@ class DropdownMenu extends React.PureComponent<Props, State> {
                             e.stopPropagation();
                             this.setState({ visible: false });
                         }}
+                        className="theme-dropdown"
                         style={{ width: '12rem' }}
                         css={tw`absolute bg-white p-2 rounded border border-neutral-700 shadow-lg text-neutral-500 z-50`}
                     >

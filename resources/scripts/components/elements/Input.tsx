@@ -8,6 +8,9 @@ export interface Props {
 
 const light = css<Props>`
     ${tw`bg-white border-neutral-200 text-neutral-800`};
+    background: var(--theme-input, white);
+    color: var(--theme-text, #33404c);
+    border-color: var(--theme-border, #cad1d8);
     &:focus {
         ${tw`border-primary-400`}
     }

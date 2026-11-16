@@ -19,4 +19,5 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn tsc --noEmit
       - run: yarn build:production
+      - run: php tests/themes_palette.php
       - run: php -l app/Services/Themes/ThemeManager.php && php -l app/Http/Controllers/Admin/ThemesController.php && php -l routes/admin.php

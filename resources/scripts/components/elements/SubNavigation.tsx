@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
-import tw, { theme } from 'twin.macro';
+import tw from 'twin.macro';
 
-const SubNavigation = styled.div`
+const SubNavigation = styled.div.attrs({ className: 'theme-subnav' as string })`
     ${tw`w-full bg-neutral-700 shadow overflow-x-auto`};
 
     & > div {
@@ -23,7 +23,7 @@ const SubNavigation = styled.div`
             &:active,
             &.active {
                 ${tw`text-neutral-100`};
-                box-shadow: inset 0 -2px ${theme`colors.cyan.600`.toString()};
+                box-shadow: inset 0 -2px var(--theme-accent, #0891b2);
             }
         }
     }

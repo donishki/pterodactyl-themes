@@ -1,6 +1,6 @@
 const colors = require('tailwindcss/colors');
 
-const gray = {
+const grayChannels = {
     50: '245 247 250',
     100: '229 232 235',
     200: '202 209 216',
@@ -13,9 +13,12 @@ const gray = {
     900: '31 41 51',
 };
 
-for (const shade of Object.keys(gray)) { gray[shade] = `rgb(var(--theme-rgb-gray-${shade}, ${gray[shade]}) / <alpha-value>)`; }
+// Functions support opacity in both Tailwind utilities and twin.macro 2.x.
+const themedColor = (role, fallback) => ({ opacityValue = 1 }) =>
+    `rgb(var(--theme-rgb-${role}, ${fallback}) / ${opacityValue})`;
+const gray = Object.fromEntries(Object.entries(grayChannels).map(([shade, rgb]) => [shade, themedColor(`gray-${shade}`, rgb)]));
 const channels = color => color.replace('#', '').match(/../g).map(x => parseInt(x, 16)).join(' ');
-const themedBlue = Object.fromEntries(Object.entries(colors.blue).map(([shade, color]) => [shade, `rgb(var(--theme-rgb-accent, ${channels(color)}) / <alpha-value>)`]));
+const themedBlue = Object.fromEntries(Object.entries(colors.blue).map(([shade, color]) => [shade, themedColor(`blue-${shade}`, channels(color))]));
 
 module.exports = {
     content: [
@@ -23,18 +26,26 @@ module.exports = {
     ],
     theme: {
         extend: {
+            textColor: {
+                ...Object.fromEntries(['gray', 'neutral'].map(name => [name,
+                    Object.fromEntries([500, 600, 700, 800, 900].map(shade => [shade,
+                        themedColor(shade <= 600 ? 'muted' : 'text', grayChannels[shade])
+                    ]))
+                ])),
+            },
             fontFamily: {
-                header: ['"IBM Plex Sans"', '"Roboto"', 'system-ui', 'sans-serif'],
+                header: ['var(--theme-font, "IBM Plex Sans")', 'system-ui', 'sans-serif'],
+                sans: ['var(--theme-font, "IBM Plex Sans")', 'system-ui', 'sans-serif'],
             },
             colors: {
-                black: 'rgb(var(--theme-rgb-background, 19 26 32) / <alpha-value>)',
+                black: '#131a20',
                 blue: themedBlue,
                 // "primary" and "neutral" are deprecated, prefer the use of "blue" and "gray"
                 // in new code.
                 primary: themedBlue,
                 gray: gray,
                 neutral: gray,
-                cyan: Object.fromEntries(Object.entries(colors.cyan).map(([shade, color]) => [shade, `rgb(var(--theme-rgb-accent, ${channels(color)}) / <alpha-value>)`])),
+                cyan: Object.fromEntries(Object.entries(colors.cyan).map(([shade, color]) => [shade, themedColor(`blue-${shade}`, channels(color))])),
             },
             borderRadius: { DEFAULT: 'var(--theme-radius, 0.25rem)', md: 'var(--theme-radius, 0.375rem)', lg: 'var(--theme-radius, 0.5rem)' },
             fontSize: {

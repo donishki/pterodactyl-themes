@@ -31,11 +31,11 @@ class ThemeManager
 
     public function presets(): array
     {
-        $base = ['radius' => 10, 'font' => 'system', 'logo' => ''];
+        $base = ['radius' => 12, 'font' => 'system', 'logo' => ''];
         return [
             'stock' => ['name' => 'Pterodactyl original', 'accent' => '#3b82f6', 'background' => '#33404d', 'surface' => '#1f2933', 'text' => '#d9e2ec', 'muted' => '#9aa5b1'] + $base,
-            'midnight' => ['name' => 'Midnight', 'accent' => '#7c8cff', 'background' => '#10121b', 'surface' => '#1b1f2f', 'text' => '#edf0fa', 'muted' => '#a5adc5'] + $base,
-            'forest' => ['name' => 'Forest', 'accent' => '#35c995', 'background' => '#101c18', 'surface' => '#1b3027', 'text' => '#e8f5ee', 'muted' => '#a0c3b2'] + $base,
+            'midnight' => ['name' => 'Midnight', 'accent' => '#7699f5', 'background' => '#0c111a', 'surface' => '#151d29', 'text' => '#edf2fa', 'muted' => '#a1aec3'] + $base,
+            'forest' => ['name' => 'Forest', 'accent' => '#58c5a0', 'background' => '#101614', 'surface' => '#19231f', 'text' => '#edf5f0', 'muted' => '#a6b9b0'] + $base,
             'daylight' => ['name' => 'Daylight', 'accent' => '#2559c7', 'background' => '#edf1f7', 'surface' => '#ffffff', 'text' => '#182338', 'muted' => '#52637c'] + $base,
         ];
     }

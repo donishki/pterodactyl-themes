@@ -1,5 +1,6 @@
+@php($panelTheme = app(\Pterodactyl\Services\Themes\ThemeManager::class)->active())
 <!DOCTYPE html>
-<html>
+<html @if($panelTheme) data-panel-theme="custom" @endif>
     <head>
         <title>{{ config('app.name', 'Pterodactyl') }}</title>
 

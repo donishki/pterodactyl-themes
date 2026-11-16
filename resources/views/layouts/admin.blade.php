@@ -1,6 +1,6 @@
 @php($panelTheme = app(\Pterodactyl\Services\Themes\ThemeManager::class)->active())
 <!DOCTYPE html>
-<html>
+<html @if($panelTheme) data-panel-theme="custom" @endif>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">

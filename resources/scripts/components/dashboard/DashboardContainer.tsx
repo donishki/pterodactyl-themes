@@ -54,6 +54,11 @@ export default () => {
 
     return (
         <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
+            <div className="theme-dashboard-heading">
+                <div><span className="theme-eyebrow">Workspace</span><h1>Server overview</h1>
+                    <p>Your infrastructure, at a glance. Select a server to manage it.</p></div>
+                <span className="theme-heading-badge">Server management</span>
+            </div>
             {rootAdmin && (
                 <div css={tw`mb-2 flex justify-end items-center`}>
                     <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>

@@ -22,7 +22,7 @@ r.raise_for_status()
 s.headers['X-CSRF-TOKEN'] = re.search(r'name="_token" content="([^"]+)"', r.text)[1]
 ids = lambda html: set(re.findall(r'/admin/themes/(custom-[a-f0-9]+)/export', html))
 before = ids(r.text)
-active_match = re.search(r'<span class="label label-success">Active</span>.*?/admin/themes/([^/]+)/activate', r.text, re.S)
+active_match = re.search(r'<span class="[^"]*theme-active-label[^"]*">Active</span>.*?/admin/themes/([^/]+)/activate', r.text, re.S)
 assert active_match, 'Could not determine active theme'
 previous = active_match[1]
 theme = {'name': 'Smoke ' + uuid.uuid4().hex[:8], 'accent': '#5566cc', 'background': '#10121b', 'surface': '#1b1f2f', 'text': '#edf0fa', 'muted': '#a5adc5', 'radius': '12', 'font': 'system', 'logo': ''}
