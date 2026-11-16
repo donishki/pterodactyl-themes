@@ -28,3 +28,19 @@ if (ThemePalette::contrast(ThemePalette::rgb($base['muted']), ThemePalette::rgb(
     throw new RuntimeException('Muted text contrast regression');
 }
 echo "PASS: $checks button contrast checks, distinct surfaces, valid RGB and muted text contrast\n";
+
+require __DIR__ . '/../app/Services/Themes/ThemePresets.php';
+foreach (\Pterodactyl\Services\Themes\ThemePresets::community() as $id => $preset) {
+    $tokens = ThemePalette::tokens($preset);
+    foreach (['background', 'surface', 'raised', 'input'] as $surface) {
+        foreach (['text', 'muted'] as $label) {
+            if (ThemePalette::contrast($tokens[$label], $tokens[$surface]) < 4.5) {
+                throw new RuntimeException("Preset contrast regression: $id / $label on $surface");
+            }
+        }
+    }
+    if (ThemePalette::contrast($tokens['blue-50'], $tokens['blue-500']) < 4.5) {
+        throw new RuntimeException("Preset button contrast regression: $id");
+    }
+}
+echo "PASS: all community presets meet text, muted and button contrast checks\n";

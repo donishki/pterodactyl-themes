@@ -37,7 +37,7 @@ class ThemeManager
             'midnight' => ['name' => 'Midnight', 'accent' => '#7699f5', 'background' => '#0c111a', 'surface' => '#151d29', 'text' => '#edf2fa', 'muted' => '#a1aec3'] + $base,
             'forest' => ['name' => 'Forest', 'accent' => '#58c5a0', 'background' => '#101614', 'surface' => '#19231f', 'text' => '#edf5f0', 'muted' => '#a6b9b0'] + $base,
             'daylight' => ['name' => 'Daylight', 'accent' => '#2559c7', 'background' => '#edf1f7', 'surface' => '#ffffff', 'text' => '#182338', 'muted' => '#52637c'] + $base,
-        ];
+        ] + ThemePresets::community();
     }
 
     public function custom(): array

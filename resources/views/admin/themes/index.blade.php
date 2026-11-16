@@ -10,16 +10,22 @@
 @section('content')
 @if(session('theme_status'))<div class="alert alert-success">{{ session('theme_status') }}</div>@endif
 <p>Choose your starting point. Customize it to match your brand, or import a saved theme. Changes apply across the panel.</p>
+<div class="theme-library-controls">
+    <div><label for="theme-search">Find a theme</label><input id="theme-search" type="search" class="form-control" placeholder="Search names or styles..."></div>
+    <div><label for="theme-mode">Appearance</label><select id="theme-mode" class="form-control"><option value="all">All themes</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
+    <span id="theme-results" role="status" aria-live="polite">{{ count($themes) }} themes</span>
+</div>
 <div class="theme-gallery">
 @foreach($themes as $id => $theme)
-<article class="theme-tile {{ $active === $id ? 'is-active' : '' }}">
+<article class="theme-tile {{ $active === $id ? 'is-active' : '' }}" data-name="{{ strtolower($theme['name'].' '.($theme['description'] ?? '')) }}" data-mode="{{ \Pterodactyl\Services\Themes\ThemePalette::luminance(\Pterodactyl\Services\Themes\ThemePalette::rgb($theme['background'])) < 0.4 ? 'dark' : 'light' }}">
     <div class="theme-mini" aria-hidden="true" style="--mini-bg:{{ $theme['background'] }};--mini-surface:{{ $theme['surface'] }};--mini-text:{{ $theme['text'] }};--mini-muted:{{ $theme['muted'] }};--mini-accent:{{ $theme['accent'] }}">
         <div class="theme-mini-top"><i></i><i></i><i></i><span></span></div>
         <div class="theme-mini-body"><div class="theme-mini-side"><i></i><i></i><i></i><i></i></div><div class="theme-mini-main"><strong>Server overview</strong><div class="theme-mini-cards"><i></i><i></i><i></i></div><div class="theme-mini-row"><b></b><span></span></div></div></div>
     </div>
     <div class="theme-tile-info">
         <h3>{{ $theme['name'] }} @if($active === $id)<span class="theme-active-label label label-success">Active</span>@endif</h3>
-        <p>{{ ['stock' => 'The familiar Pterodactyl interface.', 'midnight' => 'Slate surfaces. A quiet blue accent.', 'forest' => 'Charcoal greens. A soft emerald accent.', 'daylight' => 'Light surfaces. Crisp blue details.'][$id] ?? 'Your custom workspace appearance.' }}</p>
+        <p>{{ $theme['description'] ?? ['stock' => 'The familiar Pterodactyl interface.', 'midnight' => 'Slate surfaces. A quiet blue accent.', 'forest' => 'Charcoal greens. A soft emerald accent.', 'daylight' => 'Light surfaces. Crisp blue details.'][$id] ?? 'Your custom workspace appearance.' }}</p>
+        @if(isset($theme['source']))<a class="theme-source" href="{{ $theme['source'] }}" target="_blank" rel="noopener noreferrer">Palette inspiration ↗</a>@endif
         <div class="theme-tile-actions">
             <form method="POST" action="{{ route('admin.themes.activate', $id) }}">@csrf<button class="btn btn-primary btn-sm" @disabled($active === $id)>{{ $active === $id ? 'Applied' : 'Apply theme' }}</button></form>
             <button class="btn btn-default btn-sm theme-edit" data-theme="{{ json_encode($theme) }}">Customize</button>
@@ -32,6 +38,7 @@
 </article>
 @endforeach
 </div>
+<p id="theme-no-results" hidden>No themes match. Try another name or appearance.</p>
 <div class="row"><div class="col-md-8"><div class="box">
     <div class="box-header"><h3 class="box-title">Customize a theme</h3></div>
     <form method="POST" action="{{ route('admin.themes.store') }}" id="theme-editor">@csrf
@@ -57,6 +64,17 @@
 @parent
 <script>
 (function () {
+    const search = document.getElementById('theme-search'), mode = document.getElementById('theme-mode');
+    function filterThemes() {
+        const query = search.value.trim().toLowerCase(); let count = 0;
+        document.querySelectorAll('.theme-tile').forEach(function (tile) {
+            const show = tile.dataset.name.includes(query) && (mode.value === 'all' || tile.dataset.mode === mode.value);
+            tile.hidden = !show; if (show) count++;
+        });
+        document.getElementById('theme-results').textContent = count + (count === 1 ? ' theme' : ' themes');
+        document.getElementById('theme-no-results').hidden = count !== 0;
+    }
+    search.addEventListener('input', filterThemes); mode.addEventListener('change', filterThemes);
     const form = document.getElementById('theme-editor');
     function preview() {
         const p = document.getElementById('theme-preview'), card = document.getElementById('theme-preview-card');

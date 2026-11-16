@@ -29,3 +29,14 @@ html:not([data-panel-theme]) .theme-gallery { --theme-surface: #fff; --theme-bor
 @media (max-width: 460px) { .theme-gallery { grid-template-columns: 1fr; } }
 
 .theme-active-label { background: transparent; padding: 0; }
+
+.theme-library-controls { display: flex; gap: 18px; align-items: flex-end; margin: 24px 0; flex-wrap: wrap; }
+.theme-library-controls > div:first-child { flex: 1; min-width: 180px; }
+.theme-library-controls > div:nth-child(2) { width: 160px; }
+.theme-library-controls label { display: block; font-size: 12px; }
+#theme-results { padding-bottom: 9px; font-size: 12px; }
+.theme-tile[hidden], #theme-no-results[hidden] { display: none !important; }
+.theme-source { display: block; font-size: 11px; margin: -5px 0 14px; }
+.theme-tile-info { display: flex; flex-direction: column; flex: 1; }
+.theme-tile { display: flex; flex-direction: column; }
+.theme-tile-actions { margin-top: auto; }
