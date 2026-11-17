@@ -40,3 +40,11 @@ html:not([data-panel-theme]) .theme-gallery { --theme-surface: #fff; --theme-bor
 .theme-tile-info { display: flex; flex-direction: column; flex: 1; }
 .theme-tile { display: flex; flex-direction: column; }
 .theme-tile-actions { margin-top: auto; }
+
+.theme-tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--theme-border, #d2d6de); margin: 24px 0; flex-wrap: wrap; }
+.theme-tabs button { background: transparent; color: var(--theme-muted, #52637c); border: 0; border-bottom: 3px solid transparent; padding: 13px 18px; font-weight: 600; }
+.theme-tabs button[aria-selected=true] { color: var(--theme-accent, #367fa9); border-bottom-color: currentColor; }
+.theme-tabs button:hover { background: var(--theme-accent-soft, #eef2f6); }
+.theme-tabs button:focus-visible { outline: 2px solid var(--theme-accent, #367fa9); outline-offset: -2px; }
+section[role=tabpanel][hidden] { display: none !important; }
+.theme-form-box { max-width: 960px; }

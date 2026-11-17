@@ -10,6 +10,12 @@
 @section('content')
 @if(session('theme_status'))<div class="alert alert-success">{{ session('theme_status') }}</div>@endif
 <p>Choose your starting point. Customize it to match your brand, or import a saved theme. Changes apply across the panel.</p>
+<div class="theme-tabs" role="tablist" aria-label="Theme management">
+    <button type="button" id="theme-tab-list" role="tab" aria-controls="theme-panel-list" aria-selected="true">Themes</button>
+    <button type="button" id="theme-tab-create" role="tab" aria-controls="theme-panel-create" aria-selected="false" tabindex="-1">Customize / Create</button>
+    <button type="button" id="theme-tab-install" role="tab" aria-controls="theme-panel-install" aria-selected="false" tabindex="-1">Install</button>
+</div>
+<section id="theme-panel-list" role="tabpanel" aria-labelledby="theme-tab-list">
 <div class="theme-library-controls">
     <div><label for="theme-search">Find a theme</label><input id="theme-search" type="search" class="form-control" placeholder="Search names or styles..."></div>
     <div><label for="theme-mode">Appearance</label><select id="theme-mode" class="form-control"><option value="all">All themes</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
@@ -39,8 +45,10 @@
 @endforeach
 </div>
 <p id="theme-no-results" hidden>No themes match. Try another name or appearance.</p>
-<div class="row"><div class="col-md-8"><div class="box">
-    <div class="box-header"><h3 class="box-title">Customize a theme</h3></div>
+</section>
+<section id="theme-panel-create" role="tabpanel" aria-labelledby="theme-tab-create" hidden>
+<div class="box theme-form-box">
+    <div class="box-header"><h3 class="box-title">Customize or create a theme</h3></div>
     <form method="POST" action="{{ route('admin.themes.store') }}" id="theme-editor">@csrf
     <div class="box-body"><div class="row">
         <div class="form-group col-sm-12"><label for="theme-name">Name</label><input id="theme-name" class="form-control" name="name" required maxlength="60" value="{{ old('name', 'My theme') }}"></div>
@@ -53,17 +61,43 @@
     </div><div id="theme-preview" class="theme-editor-preview"><strong>Live preview</strong><div id="theme-preview-card" style="padding:16px;margin-top:12px">ET:Legacy test server <span id="theme-preview-muted">• Ready</span></div></div></div>
     <div class="box-footer"><button class="btn btn-primary">Save as new theme &amp; apply</button><span class="text-muted"> Existing presets are preserved.</span></div>
     </form>
-</div></div><div class="col-md-4"><div class="box">
+</div></section>
+<section id="theme-panel-install" role="tabpanel" aria-labelledby="theme-tab-install" hidden>
+<div class="box theme-form-box">
     <div class="box-header"><h3 class="box-title">Install theme package</h3></div>
     <form method="POST" action="{{ route('admin.themes.upload') }}" enctype="multipart/form-data">@csrf
     <div class="box-body"><p>Upload a ZIP exported from this panel, containing only <code>theme.json</code>. Packages include colors, fonts, corner radius and a logo URL. PHP, JavaScript and third-party theme frameworks are not supported.</p><label for="theme-package">ZIP file (up to 256 KiB)</label><input id="theme-package" type="file" name="package" accept=".zip" required></div>
     <div class="box-footer"><button class="btn btn-primary">Install theme</button></div></form>
-</div></div></div>
+</div></section>
 @endsection
 @section('footer-scripts')
 @parent
 <script>
 (function () {
+    const tabs = Array.from(document.querySelectorAll('.theme-tabs [role="tab"]'));
+    function selectTab(name, focus) {
+        tabs.forEach(function (tab) {
+            const selected = tab.id === 'theme-tab-' + name;
+            tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1;
+            document.getElementById(tab.getAttribute('aria-controls')).hidden = !selected;
+            if (selected && focus) tab.focus();
+        });
+        history.replaceState(null, '', '#'+name);
+    }
+    tabs.forEach(function (tab, index) {
+        tab.addEventListener('click', function () { selectTab(tab.id.replace('theme-tab-', ''), false); });
+        tab.addEventListener('keydown', function (event) {
+            let next;
+            if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+            if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+            if (event.key === 'Home') next = 0;
+            if (event.key === 'End') next = tabs.length - 1;
+            if (next !== undefined) { event.preventDefault(); selectTab(tabs[next].id.replace('theme-tab-', ''), true); }
+        });
+    });
+    const errorTab = @json($errors->has('package') ? 'install' : ($errors->any() ? 'create' : null));
+    const initialTab = errorTab || location.hash.slice(1);
+    selectTab(['list', 'create', 'install'].includes(initialTab) ? initialTab : 'list', false);
     const search = document.getElementById('theme-search'), mode = document.getElementById('theme-mode');
     function filterThemes() {
         const query = search.value.trim().toLowerCase(); let count = 0;
@@ -88,7 +122,7 @@
     document.querySelectorAll('.theme-edit').forEach(function (button) { button.addEventListener('click', function () {
         const data = JSON.parse(button.dataset.theme);
         Object.keys(data).forEach(function (key) { if(form.elements[key]) form.elements[key].value = data[key] || ''; });
-        form.elements.name.value += ' custom'; preview(); form.scrollIntoView({behavior:'smooth'});
+        form.elements.name.value += ' custom'; preview(); selectTab('create', false); form.elements.name.focus();
     }); }); preview();
 })();
 </script>
